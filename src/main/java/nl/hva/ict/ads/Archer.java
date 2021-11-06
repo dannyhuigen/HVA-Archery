@@ -1,15 +1,18 @@
 package nl.hva.ict.ads;
 
-public class Archer {
+import java.util.Comparator;
+
+public class Archer implements Comparator<Archer> {
     public static int MAX_ARROWS = 3;
     public static int MAX_ROUNDS = 10;
+    public static int ARCHER_ID_INDEX = 0;
 
-
-    private int id;
+    private final int id;
     private String firstName;
     private String lastName;
 
-    // TODO add instance variable(s) to track the scores per round per arrow
+    //1st array is the round second array is the arrows
+    private int[][] score;
 
     /**
      * Constructs a new instance of Archer and assigns a unique id to the instance.
@@ -20,9 +23,12 @@ public class Archer {
      * @param lastName the archers surname.
      */
     public Archer(String firstName, String lastName) {
-        // TODO initialise the new archer
-        //  generate and assign an new unique id
-        //  initialise the scores of the archer
+        this.id = ARCHER_ID_INDEX;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        score = new int[10][2];
+
+        Archer.ARCHER_ID_INDEX++;
     }
 
     /**
@@ -32,6 +38,7 @@ public class Archer {
      * @param points the points shot during the round, one for each arrow.
      */
     public void registerScoreForRound(int round, int[] points) {
+        this.score[round - 1] = points.clone();
         // TODO register the points into the archer's data structure for scores.
     }
 
@@ -41,9 +48,25 @@ public class Archer {
      * @return
      */
     public int getTotalScore() {
-        // TODO calculate/get the total score that the archer has earned across all arrows of all registered rounds
+        int totalscore = 0;
+        for (int[] round: this.score) {
+            for (int score: round) {
+                totalscore+= score;
+            }
+        }
+        return totalscore;
+    }
 
-        return 0;
+    public int getTotalMisses() {
+        int totalMisses = 0;
+        for (int[] round: this.score) {
+            for (int score: round) {
+                if (score == 0) {
+                    totalMisses++;
+                }
+            }
+        }
+        return totalMisses;
     }
 
     /**
@@ -54,10 +77,13 @@ public class Archer {
      * @return  negative number, zero or positive number according to Comparator convention
      */
     public int compareByHighestTotalScoreWithLeastMissesAndLowestId(Archer other) {
-        // TODO compares the scores/id of this archer with the other archer
-        //  and return the result according to Comparator conventions
-
-        return 0;
+        int a1TotalScore = this.getTotalScore();
+        int a2TotalScore = other.getTotalScore();
+        if (a1TotalScore != a2TotalScore) return a2TotalScore - a1TotalScore;
+        int a1TotalMisses = this.getTotalMisses();
+        int a2TotalMisses = other.getTotalMisses();
+        if (a1TotalMisses != a2TotalMisses) return a1TotalMisses - a2TotalMisses;
+        else return this.getId() - other.getId();
     }
 
     /**
@@ -66,15 +92,6 @@ public class Archer {
      */
     public int getId() {
         return id;
-    }
-
-    /**
-     * Set id
-     * @param id the id to set
-     */
-    public void setId(int id) {
-        //If id is not set (0) it is allowed to be assigned
-        this.id = (this.id == 0) ? id : this.id;
     }
 
     /**
@@ -93,5 +110,21 @@ public class Archer {
         return lastName;
     }
 
-    // TODO provide a toSting implementation to format archers nicely
+    @Override
+    public String toString() {
+        return this.getId()
+                + " (" + this.getTotalScore() + ") "
+                + this.getFirstName() + " " + this.getLastName();
+    }
+
+    @Override
+    public int compare(Archer a1, Archer a2) {
+        int a1TotalScore = a1.getTotalScore();
+        int a2TotalScore = a2.getTotalScore();
+        if (a1TotalScore != a2TotalScore) return a1TotalScore - a2TotalScore;
+        int a1TotalMisses = a1.getTotalMisses();
+        int a2TotalMisses = a2.getTotalMisses();
+        if (a1TotalMisses != a2TotalMisses) return a1TotalMisses - a2TotalMisses;
+        else return a1.getId() - a2.getId();
+    }
 }

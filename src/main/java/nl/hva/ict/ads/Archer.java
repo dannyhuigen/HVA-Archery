@@ -5,7 +5,7 @@ public class Archer {
     public static int MAX_ROUNDS = 10;
 
 
-    private int id;         // TODO Once assigned a value is not allowed to change.
+    private int id;
     private String firstName;
     private String lastName;
 
@@ -60,14 +60,35 @@ public class Archer {
         return 0;
     }
 
+    /**
+     * Get id of the archer
+     * @return id of the archer
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Set id
+     * @param id the id to set
+     */
+    public void setId(int id) {
+        //If id is not set (0) it is allowed to be assigned
+        this.id = (this.id == 0) ? id : this.id;
+    }
+
+    /**
+     * Get first name of archer
+     * @return first name of archer
+     */
     public String getFirstName() {
         return firstName;
     }
 
+    /**
+     * Get last name of archer
+     * @return last name of archer
+     */
     public String getLastName() {
         return lastName;
     }

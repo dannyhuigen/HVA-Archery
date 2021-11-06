@@ -1,7 +1,10 @@
 package nl.hva.ict.ads;
 
+import java.lang.reflect.Array;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class SorterImpl<E> implements Sorter<E> {
 
@@ -14,8 +17,19 @@ public class SorterImpl<E> implements Sorter<E> {
      * @return  the items sorted in place
      */
     public List<E> selInsSort(List<E> items, Comparator<E> comparator) {
-        // TODO implement selection or insertion sort
-
+        for (int i=1; i < items.size(); i++) {
+            E indexCurrent = items.get(i);
+            int j = i;
+            while (j > 0) {
+                E indexSorting = items.get(j-1);
+                if (comparator.compare(indexCurrent, indexSorting) >= 0) {
+                    break;
+                }
+                items.set(j, indexSorting);
+                j--;
+            }
+            items.set(j, indexCurrent);
+        }
         return items;
     }
 
@@ -38,14 +52,45 @@ public class SorterImpl<E> implements Sorter<E> {
      * for deciding relative ordening of two items
      * Items are sorted 'in place' without use of an auxiliary list or array or other positions in items
      *
-     * @param items
-     * @param comparator
-     * @return  the items sorted in place
+     * @param list the list
+     * @param left left/low
+     * @param right right/high
+     * @param comparator the comparator
      */
-    private void quickSortPart(List<E> items, int from, int to, Comparator<E> comparator) {
+    private void quickSortPart(List<E> list, int left, int right, Comparator<E> comparator) {
+        E pivot = list.get(left + (right-left) /2);
 
-        // TODO quick sort the sublist of items between index positions 'from' and 'to' inclusive
+        int tempHigh = right;
+        int tempLow = left;
 
+        while(tempLow <= tempHigh){
+
+            //If pivot has better score go up
+            while(comparator.compare(list.get(tempLow), pivot) < 0){
+                tempLow++;
+            }
+
+            //If pivot has worse score go down
+            while(comparator.compare(list.get(tempHigh), pivot) > 0){
+                tempHigh--;
+            }
+
+            if(tempLow <= tempHigh){
+                E temp = list.get(tempLow);
+                list.set(tempLow, list.get(tempHigh));
+                list.set(tempHigh, temp);
+
+                tempHigh--;
+                tempLow++;
+            }
+        }
+
+        if(left < tempHigh){
+            quickSortPart(list, left, tempHigh, comparator);
+        }
+        if(tempLow < right){
+            quickSortPart(list, tempLow, right , comparator);
+        }
     }
 
     /**
